@@ -8,7 +8,7 @@ const app = express();
 
 
 const MongoClient = require('mongodb').MongoClient;
-const uri = "mongodb+srv://admin-siyu:<3PU8Nug6l14lCoy3>@cluster0.cgdpq.mongodb.net/<projectTaskManager>?retryWrites=true&w=majority";
+const uri = "mongodb+srv://admin-siyu:<CPngnZsZymB6Cz70>@cluster0.cgdpq.mongodb.net/<projectTaskManager>?retryWrites=true&w=majority";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
   const collection = client.db("test").collection("devices");
@@ -22,7 +22,9 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-// mongoose.connect("mongodb+srv://admin-siyu:<3PU8Nug6l14lCoy3>@cluster0.cgdpq.mongodb.net/projectTaskManagerDB", {useNewUrlParser: true});
+// mongoose.connect("mongodb://localhost:27017/todolistDB", {userNewUrlParser: true});
+
+// mongoose.connect("mongodb+srv://admin-siyu:<CPngnZsZymB6Cz70>@cluster0.cgdpq.mongodb.net/projectTaskManagerDB", {useNewUrlParser: true});
 
 const itemsSchema = {   //schema
   name: String
