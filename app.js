@@ -16,7 +16,11 @@ app.use(express.static("public"));
 
 // mongoose.connect("mongodb://localhost:27017/todolistDB", {userNewUrlParser: true});
 
+<<<<<<< HEAD
 mongoose.connect("mongodb+srv://admin-siyu:CPngnZsZymB6Cz70@cluster0.cgdpq.mongodb.net/projectTaskManagerDB", {useNewUrlParser: true});
+=======
+mongoose.connect("mongodb+srv://admin-siyu:<CPngnZsZymB6Cz70>@cluster0.cgdpq.mongodb.net/projectTaskManagerDB", {useNewUrlParser: true});
+>>>>>>> 18713bc2c9975a3c7fba15fbd3f32e40845177ec
 
 const itemsSchema = {   //schema
   name: String
