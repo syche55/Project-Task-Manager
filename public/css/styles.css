@@ -128,12 +128,10 @@ footer {
 }
 
 #keyProject {
-  width:32%;
-  float:left;
-  margin-left:1%
   padding-top: 15px;
   padding-bottom: 15px;
   margin-top:50px;
+  margin-left: 2%;
   text-align: center;
   font-size: 30px;
   font-weight: bold;
