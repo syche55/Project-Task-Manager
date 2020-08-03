@@ -1,0 +1,14 @@
+<%- include("header") -%>
+
+<div class="firstPage">
+
+    <h1>Project Checkout 👇</h1>
+  <form action="/NewProject" method="post">
+    <input name="key" type="text" id="firstPageInput" value="Project Name" onmouseover=this.focus();this.select(); onclick="if(value==defaultValue){value='';this.style.color='#586b8f'}"
+      onBlur="if(!value){value=defaultValue;this.style.color='#586b8f'}" style="color:#586b8f" />
+</form>
+</div>
+
+
+
+<%- include("footer") -%>

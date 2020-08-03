@@ -6,143 +6,160 @@ const mongoose = require("mongoose");
 const _ = require("lodash");
 const app = express();
 
-
-
-
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-// mongoose.connect("mongodb://localhost:27017/todolistDB", {userNewUrlParser: true});
-mongoose.connect("mongodb+srv://admin-siyu:CPngnZsZymB6Cz70@cluster0.cgdpq.mongodb.net/projectTaskManagerDB", {useNewUrlParser: true});
 
+// mongoose.connect("mongodb://localhost:27017/todolistDB", {userNewUrlParser: true,  useUnifiedTopology: true});
+mongoose.connect("mongodb+srv://admin-siyu:CPngnZsZymB6Cz70@cluster0.cgdpq.mongodb.net/projectTaskManagerDB", {useNewUrlParser: true, useUnifiedTopology: true});
+
+// item
 const itemsSchema = {   //schema
-  name: String
+  name: String,
+  status: String
 };
 
 const Item = mongoose.model("Item", itemsSchema); //model
 
-const item1 = new Item({
-  name:"Welcome to your todolist!"
-});
-
-const item2 = new Item({
-  name:"Hit the + button to add a new Item"
-});
-
-const item3 = new Item({
-  name:"<-- Hit this to delete an item"
-});
-
-const defaultItems = [item1, item2, item3];
-
+// list
 const listSchema = {
   name: String,
-  items: [itemsSchema]
+  items: [itemsSchema],
+  projectBelong: String
 };
 
 const List = mongoose.model("List", listSchema);
 
+const listPlan = new List({
+  name:"Plan"
+});
+
+const listInProgress = new List({
+  name:"In Progress"
+});
+
+const listFinish = new List({
+  name:"Finish"
+});
+
+const defaultLists = [listPlan, listInProgress, listFinish];
+
+// project
+const projectSchema={
+  name: String,
+  taskLists: [listSchema]
+};
+
+const Project = mongoose.model("Project", projectSchema);
+
+let currentProject = new Project({
+});
+
+
+function renderIfAllItemsRetrieved(res, listPlanItemsFound, listInProgressItemsFound, listFinishItemsFound, customProjectName){
+  if (listPlanItemsFound && listInProgressItemsFound && listFinishItemsFound){
+    res.render("list", {itemsPlan:listPlan.items, itemsInProgress:listInProgress.items, itemsFinish:listFinish.items, projectTitle: customProjectName});
+  }
+}
 
 app.get("/", function(req, res) {
-  Item.find({}, function(err, foundItems){    //{} means find all
 
-    if (foundItems.length === 0){
-      Item.insertMany(defaultItems, function(err){
-        if (err){
-          console.log(err);
-        } else {
-          console.log("Successfully saved!");
-        }
-      });
-      res.redirect("/");    // if not do this, default items will not be saved
-    } else {
-      res.render("list", {listTitle:"Today", newListItems: foundItems});
-    }
-  });
-});
-
-app.get("/:customListName", function(req, res){
-  const customListName = _.capitalize(req.params.customListName);
-
-  List.findOne({name:customListName }, function(err, foundList){
-    if (!err){
-      if (!foundList){
-        // create a new list
-        const list = new List({
-          name: customListName,
-          items: defaultItems
-        });
-        list.save();
-        res.redirect("/" + customListName);
-      } else {
-        // show an existing list
-        res.render("list", {listTitle: foundList.name, newListItems: foundList.items});
-      }
-    }
-  });
-
-
+  res.render("firstPage");
 
 });
 
-app.post("/", function(req, res){
 
+app.post("/AddItem", function(req, res){
   const itemName = req.body.newItem;
   const listName = req.body.list;
 
   const item = new Item({
-    name: itemName
+    name: itemName,
+    status: listName
   });
 
-  if (listName ==="Today"){
-    item.save();
-    res.redirect("/");
-  } else {
-    List.findOne({name: listName}, function(err, foundList){
-      foundList.items.push(item);
-      foundList.save();
-      res.redirect("/"+listName);
-    });
+  item.save();
+
+  if (listName ==="Plan"){
+    currentProject.taskLists[0].items.push(item);
+    currentProject.save();
+    console.log(currentProject.taskLists[0].items);
+    res.redirect("/project/"+currentProject.name);
   }
-
-
-
+  else if (listName === "In Progress"){
+    currentProject.taskLists[1].items.push(item);
+    currentProject.save();
+    res.redirect("/project/"+currentProject.name);
+  }
+  else if(listName === "Finish"){
+    currentProject.taskLists[2].items.push(item);
+    currentProject.save();
+    res.redirect("/project/"+currentProject.name);
+  }
 });
-app.post("/delete", function(req, res){
+
+app.post("/moveToNextStage", function(req, res){
   const checkedItemId = req.body.checkbox;
+  const checkedItemName = req.body.itemName;
   const listName = req.body.listName;
+  const checkedItemIndex = req.body.itemIndex;
 
-  if (listName==="Today"){
-    Item.findByIdAndRemove(checkedItemId, function(err){    //call back is required to do remove, otherwise only find
-      if (!err){
-        console.log("Successfully deleted checked item");
-        res.redirect("/");
-      }
-    });
-  }else{
-    List.findOneAndUpdate({name: listName}, {$pull: {items: {_id: checkedItemId}}}, function(err, foundList){
-      if (!err){
-        res.redirect("/"+listName);
-      }
-    });
+  let moveItem;
+  if (listName==="Plan"){
+    moveItem = new Item({name: checkedItemName, status:"In Progress"});
+    // moveItem.save();
+    currentProject.taskLists[1].items.push(moveItem);
+    currentProject.taskLists[0].items.splice(checkedItemIndex, 1);
+
+  } else if (listName==="In Progress"){
+    moveItem = new Item({name: checkedItemName, status:"Finish"});
+    currentProject.taskLists[2].items.push(moveItem);
+    currentProject.taskLists[1].items.splice(checkedItemIndex, 1);
+
+  } else {
+    currentProject.taskLists[2].items.splice(checkedItemIndex, 1);
   }
+  currentProject.save();
 
+  res.redirect("/project/"+currentProject.name);
 });
 
-app.get("/work", function(req,res){
-  res.render("list", {listTitle: "Work List", newListItems: workItems});
-});
 
-app.get("/about", function(req, res){
-  res.render("about");
+app.get("/project/:customProjectName", function(req, res){
+    const customProjectName = _.capitalize(req.params.customProjectName);
+    console.log(customProjectName + "customProjectName");
+    Project.findOne({name: customProjectName}, function(err, foundProject){
+      if (!err){
+        if (!foundProject){
+            // create a new project
+            const newProject = new Project({
+              name: customProjectName,
+              taskLists: defaultLists
+            });
+            newProject.save();
+            currentProject = newProject;
+            console.log("new project create");
+        } else {
+          currentProject = foundProject;
+          console.log("foundProject");
+        }
+        res.render("list", {itemsPlan:currentProject.taskLists[0].items, itemsInProgress:currentProject.taskLists[1].items, itemsFinish:currentProject.taskLists[2].items, projectTitle: customProjectName});
+      }
+    });
 });
 
 let port = process.env.PORT;
 if (port == null || port == "") {
   port = 3000;
 }
+
+app.post("/NewProject", function(req, res){
+  const projectNameEntered = req.body.key;
+  console.log(req.body.key);
+  res.redirect("/project/"+projectNameEntered);
+});
 
 
 app.listen(port, function() {

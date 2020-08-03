@@ -1,26 +1,93 @@
 <%- include("header") -%>
 
-<div class="box" id="heading">
-  <h1> <%= listTitle %> </h1>
+
+
+<div class="ProjectTitle">
+  <form action="/NewProject" method="post">
+    <input name="key" type="text" id="keyProject" value="<%=projectTitle%>" onclick="if(value==defaultValue){value='';this.style.color='#586b8f'}"
+      onBlur="if(!value){value=defaultValue;this.style.color='#586b8f'}" style="color:#586b8f" />
+  </form>
 </div>
 
-<div class="box">
+<div class="main" style=" margin:auto; width:100%;">
 
-  <% newListItems.forEach(function(item){ %>
-  <form action="/delete" method="post">
-    <div class="item">
-      <input type="checkbox" name="checkbox" value="<%=item._id%>" onChange="this.form.submit()">
-      <p><%=  item.name  %></p>
+  <div class="plan" style=" width:32%; float:left; margin-left:1%;">
+    <div class="box" id="heading">
+      <h2> Plan 🗒️ </h2>
     </div>
-    <input type="hidden" name="listName" value="<%= listTitle %>"></input>
-  </form>
-  <% }) %>
+
+    <div class="box">
+      <% for(let i=0; i<itemsPlan.length; i++){ %>
+      <form action="/moveToNextStage" method="post">
+        <div class="item">
+          <input type="checkbox" name="checkbox" value="<%=itemsPlan[i]._id%>" onChange="this.form.submit()">
+          <p><%=  itemsPlan[i].name  %></p>
+        </div>
+        <input type="hidden" name="listName" value="Plan"></input>
+        <input type="hidden" name="itemName" value="<%=itemsPlan[i].name%>"></input>
+        <input type="hidden" name="itemIndex" value="<%=i%>"></input>
+      </form>
+      <% }%>
+
+      <form class="item" action="/AddItem" method="post">
+        <input id="addItem" type="text" name="newItem" placeholder="New Item" autocomplete="off">
+        <button type="submit" name="list" value="Plan">+</button>
+      </form>
+    </div>
+  </div>
 
 
-  <form class="item" action="/" method="post">
-    <input type="text" name="newItem" placeholder="New Item" autocomplete="off">
-    <button type="submit" name="list" value="<%= listTitle %>">+</button>
-  </form>
+  <div class="inProgress" style=" width:32%; float:left; margin-left:1%;">
+    <div class="box" id="heading">
+      <h2> In Progress 👩‍💻 </h2>
+    </div>
+    <div class="box">
+      <% for(let i=0; i<itemsInProgress.length; i++){ %>
+        <form action="/moveToNextStage" method="post">
+          <div class="item">
+            <input type="checkbox" name="checkbox" value="<%=itemsInProgress[i]._id%>" onChange="this.form.submit()">
+            <p><%=  itemsInProgress[i].name  %></p>
+          </div>
+          <input type="hidden" name="listName" value="In Progress"></input>
+          <input type="hidden" name="itemName" value="<%=itemsInProgress[i].name%>"></input>
+          <input type="hidden" name="itemIndex" value="<%=i%>"></input>
+        </form>
+      <% } %>
+
+      <form class="item" action="/AddItem" method="post">
+        <input id="addItem" type="text" name="newItem" placeholder="New Item" autocomplete="off">
+        <button type="submit" name="list" value="In Progress">+</button>
+      </form>
+    </div>
+  </div>
+
+
+  <div class="finish" style="width:32%; float:left; margin-left:1%;">
+    <div class="box" id="heading">
+      <h2> Finish 🌕 </h2>
+    </div>
+    <div class="box">
+      <% for(let i=0; i<itemsFinish.length; i++){ %>
+      <form action="/moveToNextStage" method="post">
+        <div class="item">
+          <p><%=  itemsFinish[i].name  %></p>
+          <button class="btn" name="checkbox" value="<%=itemsFinish[i]._id%>" style="position: absolute; right: 0; margin-right: 60px;" onChange="this.form.submit()"><i class="fa fa-trash"></i></button>
+
+        </div>
+        <input type="hidden" name="listName" value="Finish"></input>
+        <input type="hidden" name="itemIndex" value="<%=i%>"></input>
+      </form>
+      <% } %>
+
+      <form class="item" action="/AddItem" method="post">
+        <input id="addItem" type="text" name="newItem" placeholder="New Item" autocomplete="off">
+        <button type="submit" name="list" value="Finish">+</button>
+      </form>
+    </div>
+  </div>
+
 </div>
+
+
 
 <%- include("footer") -%>
