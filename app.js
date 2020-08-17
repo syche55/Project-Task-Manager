@@ -4,6 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const _ = require("lodash");
+const helper = require('./helper');
 const app = express();
 
 app.set('view engine', 'ejs');
@@ -60,7 +61,7 @@ let currentProject = new Project({
 
 function renderIfAllItemsRetrieved(res, listPlanItemsFound, listInProgressItemsFound, listFinishItemsFound, customProjectName){
   if (listPlanItemsFound && listInProgressItemsFound && listFinishItemsFound){
-    res.render("list", {itemsPlan:listPlan.items, itemsInProgress:listInProgress.items, itemsFinish:listFinish.items, projectTitle: customProjectName});
+    res.render("list", {itemsPlan:listPlan.items, itemsInProgress:listInProgress.items, itemsFinish:listFinish.items, projectTitle: customProjectName, helper:helper});
   }
 }
 

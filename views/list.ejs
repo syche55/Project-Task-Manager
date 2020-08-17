@@ -1,5 +1,5 @@
 <%- include("header") -%>
-
+<%= helper.validateForm() %>
 
 
 <div class="ProjectTitle">
@@ -29,7 +29,7 @@
       </form>
       <% }%>
 
-      <form class="item" action="/AddItem" method="post">
+      <form name="listInput" class="item" action="/AddItem" onsubmit="return validateForm()" method="post" required>
         <input id="addItem" type="text" name="newItem" placeholder="New Item" autocomplete="off">
         <button type="submit" name="list" value="Plan">+</button>
       </form>
