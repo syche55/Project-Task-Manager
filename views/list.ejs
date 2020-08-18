@@ -1,12 +1,13 @@
 <%- include("header") -%>
-<%= helper.validateForm() %>
-
 
 <div class="ProjectTitle">
   <form action="/NewProject" method="post">
     <input name="key" type="text" id="keyProject" value="<%=projectTitle%>" onclick="if(value==defaultValue){value='';this.style.color='#586b8f'}"
       onBlur="if(!value){value=defaultValue;this.style.color='#586b8f'}" style="color:#586b8f" />
+      <h3>👈 Checkout Other Projects </h3>
   </form>
+
+
 </div>
 
 <div class="main" style=" margin:auto; width:100%;">
@@ -29,8 +30,8 @@
       </form>
       <% }%>
 
-      <form name="listInput" class="item" action="/AddItem" onsubmit="return validateForm()" method="post" required>
-        <input id="addItem" type="text" name="newItem" placeholder="New Item" autocomplete="off">
+      <form name="listInput" class="item" action="/AddItem" method="post">
+        <input id="addItem" type="text" name="newItem" placeholder="Enter New Item Here" autocomplete="off">
         <button type="submit" name="list" value="Plan">+</button>
       </form>
     </div>
@@ -55,7 +56,7 @@
       <% } %>
 
       <form class="item" action="/AddItem" method="post">
-        <input id="addItem" type="text" name="newItem" placeholder="New Item" autocomplete="off">
+        <input id="addItem" type="text" name="newItem" placeholder="Enter New Item Here" autocomplete="off">
         <button type="submit" name="list" value="In Progress">+</button>
       </form>
     </div>
@@ -80,7 +81,7 @@
       <% } %>
 
       <form class="item" action="/AddItem" method="post">
-        <input id="addItem" type="text" name="newItem" placeholder="New Item" autocomplete="off">
+        <input id="addItem" type="text" name="newItem" placeholder="Enter New Item Here" autocomplete="off">
         <button type="submit" name="list" value="Finish">+</button>
       </form>
     </div>
