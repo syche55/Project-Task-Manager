@@ -4,10 +4,10 @@ link: https://siyu-project-task-manager.herokuapp.com/
 
 ![](taskManagerDemo.gif)
 
-⚓ Tasks can be catogorised into Plan / In Progress / Finished
+🌟 Tasks can be catogorised into Plan / In Progress / Finished
 
-⚓ After check, the task is moved to the next stage
+🌟 After check, the task is moved to the next stage
 
-⚓ Once the task is finished, option to delete it
+🌟 Once the task is finished, option to delete it
 
-⚓ Supports multiple projects
+🌟 Supports multiple projects
